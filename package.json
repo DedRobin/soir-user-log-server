@@ -1,0 +1,23 @@
+{
+  "name": "soir-user-log-server",
+  "version": "1.0.0",
+  "description": "The service that should receive and record data in \"xlsx\" format received from the client",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DedRobin/soir-user-log-server.git"
+  },
+  "author": "Pavel Rabekin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DedRobin/soir-user-log-server/issues"
+  },
+  "homepage": "https://github.com/DedRobin/soir-user-log-server#readme",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

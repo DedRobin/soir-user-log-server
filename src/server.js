@@ -2,7 +2,6 @@ const { createServer } = require('node:http');
 const { appendRowToBook, createBook } = require('./actions');
 const { getFormattedDate } = require('./services');
 
-
 const filename = 'visitors';
 const path = `${process.cwd()}\\${filename}.xlsx`;
 
@@ -26,11 +25,11 @@ const requestListener = (request, response) => {
       const row = [date, ...Object.values(data)];
       try {
         appendRowToBook(row, path);
+        response.end('Пользователь добавлен.');
       } catch (e) {
-        console.log(e);
         createBook(row, path);
+        response.end('Создана новая база данных.\nПользователь добавлен.');
       }
-      response.end(JSON.stringify(chunks.join('')));
     });
   } else {
     response.end(JSON.stringify({ error: 'Error' }));

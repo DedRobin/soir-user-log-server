@@ -6,33 +6,47 @@ const filename = 'visitors';
 const path = `${process.cwd()}\\${filename}.xlsx`;
 
 const requestListener = (request, response) => {
-  response.setHeader('Content-Type', 'application/json');
-  response.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-  response.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-  response.setHeader(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization'
-  );
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': 'http://localhost:5173',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': 2592000,
+  };
 
-  if (request.method === 'POST') {
-    const chunks = [];
-    request.on('data', (chunk) => {
-      chunks.push(chunk);
-    });
-    request.on('end', () => {
-      const data = JSON.parse(chunks.join(''));
-      const date = getFormattedDate();
-      const row = [date, ...Object.values(data)];
-      try {
-        appendRowToBook(row, path);
-        response.end('Пользователь добавлен.');
-      } catch (e) {
-        createBook(row, path);
-        response.end('Создана новая база данных.\nПользователь добавлен.');
-      }
-    });
+  if (request.method === 'OPTIONS') {
+    response.writeHead(204, headers);
+    response.end();
+    return;
+  }
+
+  if (request.url === '/visitors/add') {
+    if (request.method === 'POST') {
+      const chunks = [];
+      request.on('data', (chunk) => {
+        chunks.push(chunk);
+      });
+      request.on('end', () => {
+        const data = JSON.parse(chunks.join(''));
+        const date = getFormattedDate();
+        const row = [date, ...Object.values(data)];
+        try {
+          appendRowToBook(row, path);
+          response.writeHead(200, headers);
+          response.end('Пользователь добавлен.');
+        } catch (e) {
+          createBook(row, path);
+          response.writeHead(201, headers);
+          response.end('Создана новая база данных.\nПользователь добавлен.');
+        }
+      });
+    }
+  } else if (request.url === '/test') {
+    response.writeHead(200, headers);
+    response.end(JSON.stringify({ test: 'test' }));
   } else {
-    response.end(JSON.stringify({ error: 'Error' }));
+    response.writeHead(400, headers);
+    response.end('Что-то пошло не так.');
   }
 };
 
